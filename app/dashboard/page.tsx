@@ -1,4 +1,3 @@
-// app/dashboard/page.tsx
 "use client"
 
 import { useEffect, useState } from "react"
@@ -26,11 +25,11 @@ interface Item {
   createdAt: any
 }
 
+
 export default function DashboardPage() {
   const { user, userData, loading } = useAuth()
   const [userItems, setUserItems] = useState<Item[]>([])
   const [swapRequests, setSwapRequests] = useState<any[]>([])
-  const [redeemedItems, setRedeemedItems] = useState<Item[]>([]);
   const [itemsLoading, setItemsLoading] = useState(true)
   const router = useRouter()
 
@@ -42,79 +41,45 @@ export default function DashboardPage() {
 
   useEffect(() => {
     const fetchSwapRequests = async () => {
-      if (!user) return
+      if (!user) return;
 
       try {
         const q = query(
           collection(db, "swaps"),
           where("toUser", "==", user.uid),
           where("status", "==", "pending")
-        )
-        const querySnapshot = await getDocs(q)
+        );
+        const querySnapshot = await getDocs(q);
         const requests = querySnapshot.docs.map((doc) => {
-          const data = doc.data()
+          const data = doc.data();
           return {
             id: doc.id,
-            ...data,
-            requesterId: data.requesterId,
-            offeredItemId: data.offeredItemId,
-            itemId: data.itemId,
-          }
-        })
+            requesterId: data.requesterId, // Ensure requesterId is present
+            ...(data as { [key: string]: any }),
+          };
+        });
 
+        // Enrich swap requests with requester's name
         const enrichedRequests = await Promise.all(
           requests.map(async (request) => {
-            const requesterDoc = await getDoc(doc(db, "users", request.requesterId))
-            const requesterData = requesterDoc.data()
-            const offeredItemDoc = await getDoc(doc(db, "items", request.offeredItemId))
-            const offeredItemData = offeredItemDoc.data()
+            const requesterDoc = await getDoc(doc(db, "users", request.requesterId));
+            const requesterData = requesterDoc.data();
             return {
               ...request,
               requesterName: requesterData?.name || "Unknown",
-              offeredItem: offeredItemData ? {
-                id: offeredItemDoc.id,
-                title: offeredItemData.title,
-                imageUrl: offeredItemData.imageUrl,
-              } : null,
-            }
+            };
           })
-        )
-        setSwapRequests(enrichedRequests)
+        );
+        setSwapRequests(enrichedRequests);
       } catch (error) {
-        console.error("Error fetching swap requests:", error)
+        console.error("Error fetching swap requests:", error);
       }
-    }
+    };
 
     if (user) {
-      fetchSwapRequests()
+      fetchSwapRequests();
     }
-  }, [user])
-
-  useEffect(() => {
-  const fetchRedeemedItems = async () => {
-    if (!user) return;
-
-    try {
-      const q = query(
-        collection(db, "items"),
-        where("redeemedBy", "==", user.uid),
-        where("status", "==", "redeemed")
-      );
-      const querySnapshot = await getDocs(q);
-      const items = querySnapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      })) as Item[];
-      setRedeemedItems(items);
-    } catch (error) {
-      console.error("Error fetching redeemed items:", error);
-    }
-  };
-
-  if (user) {
-    fetchRedeemedItems();
-  }
-}, [user]);
+  }, [user]);
 
   useEffect(() => {
     const fetchUserItems = async () => {
@@ -140,31 +105,47 @@ export default function DashboardPage() {
     }
   }, [user])
 
+  // Handle Accept button
   const handleAccept = async (request: any) => {
     try {
-      await updateDoc(doc(db, "swaps", request.id), { status: "accepted" })
-      await updateDoc(doc(db, "items", request.itemId), { status: "swapped" })
-      await updateDoc(doc(db, "items", request.offeredItemId), { status: "swapped" })
+      // Update swap status to "accepted"
+      await updateDoc(doc(db, "swaps", request.id), {
+        status: "accepted",
+      });
 
-      setUserItems((prev) =>
-        prev.map((item) =>
-          item.id === request.itemId ? { ...item, status: "swapped" } : item
-        )
-      )
-      setSwapRequests((prev) => prev.filter((r) => r.id !== request.id))
+      // Update item status to "swapped" in Firestore and local state
+      if (request.itemId) {
+        await updateDoc(doc(db, "items", request.itemId), {  // Fixed from " wrinkleitems" to "items"
+          status: "swapped",
+        });
+        setUserItems((prev) =>
+          prev.map((item) =>
+            item.id === request.itemId ? { ...item, status: "swapped" } : item
+          )
+        );
+      }
+
+      // Remove the request from the list
+      setSwapRequests((prev) => prev.filter((r) => r.id !== request.id));
     } catch (error) {
-      console.error("Error accepting swap:", error)
+      console.error("Error accepting swap:", error);
     }
-  }
+  };
 
+  // Handle Decline button
   const handleDecline = async (request: any) => {
     try {
-      await updateDoc(doc(db, "swaps", request.id), { status: "declined" })
-      setSwapRequests((prev) => prev.filter((r) => r.id !== request.id))
+      // Update swap status to "declined"
+      await updateDoc(doc(db, "swaps", request.id), {
+        status: "declined",
+      });
+
+      // Remove the request from the list (no item status change needed)
+      setSwapRequests((prev) => prev.filter((r) => r.id !== request.id));
     } catch (error) {
-      console.error("Error declining swap:", error)
+      console.error("Error declining swap:", error);
     }
-  }
+  };
 
   if (loading) {
     return (
@@ -184,15 +165,16 @@ export default function DashboardPage() {
     )
   }
 
-  if (!user) return <></>
+  if (!user) return null
 
-const availableItems = userItems.filter((item) => item.status === "available")
-const swappedItems = userItems.filter((item) => item.status === "swapped")
+  const availableItems = userItems.filter((item) => item.status === "available")
+  const swappedItems = userItems.filter((item) => item.status === "swapped")
 
   return (
     <div className="min-h-screen bg-gray-50">
       <Navbar />
       <div className="container mx-auto px-4 py-8">
+        {/* User Profile Header */}
         <div className="bg-white rounded-lg shadow-sm p-6 mb-8">
           <div className="flex items-center space-x-4">
             <Avatar className="h-16 w-16">
@@ -206,14 +188,12 @@ const swappedItems = userItems.filter((item) => item.status === "swapped")
                   <Star className="h-4 w-4 mr-1" />
                   {userData?.points || 0} Points
                 </Badge>
-                <Button asChild variant="outline" size="sm">
-                  <Link href="/add-points">Add Points</Link>
-                </Button>
               </div>
             </div>
           </div>
         </div>
 
+        {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -244,16 +224,18 @@ const swappedItems = userItems.filter((item) => item.status === "swapped")
           </Card>
         </div>
 
+        {/* Items Tabs */}
         <Tabs defaultValue="listings" className="space-y-4">
           <div className="flex justify-between items-center">
             <TabsList>
               <TabsTrigger value="listings">My Listings</TabsTrigger>
               <TabsTrigger value="swaps">My Swaps</TabsTrigger>
-              <TabsTrigger value="redeems">My Redeems</TabsTrigger>
               <TabsTrigger value="requests">
                 Swap Requests
                 {swapRequests.length > 0 && (
-                  <Badge variant="destructive" className="ml-2">{swapRequests.length}</Badge>
+                  <Badge variant="destructive" className="ml-2">
+                    {swapRequests.length}
+                  </Badge>
                 )}
               </TabsTrigger>
             </TabsList>
@@ -312,7 +294,7 @@ const swappedItems = userItems.filter((item) => item.status === "swapped")
               <Card className="p-8 text-center">
                 <Package className="h-12 w-12 text-gray-400 mx-auto mb-4" />
                 <h3 className="text-lg font-semibold mb-2">No items listed yet</h3>
-                <p className="text-gray-600 mb-4">Start by uploading your first item.</p>
+                <p className="text-gray-600 mb-4">Start by uploading your first item to the community.</p>
                 <Button asChild>
                   <Link href="/upload">Upload Your First Item</Link>
                 </Button>
@@ -339,7 +321,9 @@ const swappedItems = userItems.filter((item) => item.status === "swapped")
                         <Badge variant="secondary">{item.category}</Badge>
                         <Badge variant="outline">{item.condition}</Badge>
                       </div>
-                      <Badge variant="secondary" className="capitalize">{item.status}</Badge>
+                      <Badge variant="secondary" className="capitalize">
+                        {item.status}
+                      </Badge>
                     </CardContent>
                   </Card>
                 ))}
@@ -357,27 +341,12 @@ const swappedItems = userItems.filter((item) => item.status === "swapped")
             {swapRequests.length > 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {swapRequests.map((request) => {
-                  const item = userItems.find((item) => item.id === request.itemId)
+                  const item = userItems.find((item) => item.id === request.itemId);
                   return (
                     <Card key={request.id} className="overflow-hidden">
                       <CardContent className="p-4">
                         <div className="space-y-2">
                           <p className="font-semibold">Swap Request from {request.requesterName}</p>
-                          {request.offeredItem ? (
-                            <>
-                              <div className="aspect-square relative">
-                                <Image
-                                  src={request.offeredItem.imageUrl || "/placeholder.svg?height=300&width=300"}
-                                  alt={request.offeredItem.title}
-                                  fill
-                                  className="object-cover"
-                                />
-                              </div>
-                              <p>Offered: {request.offeredItem.title}</p>
-                            </>
-                          ) : (
-                            <p>Offered item not found</p>
-                          )}
                           {item ? (
                             <>
                               <div className="aspect-square relative">
@@ -388,7 +357,7 @@ const swappedItems = userItems.filter((item) => item.status === "swapped")
                                   className="object-cover"
                                 />
                               </div>
-                              <p>Requested: {item.title}</p>
+                              <p>Item: {item.title}</p>
                             </>
                           ) : (
                             <p>Item not found</p>
@@ -404,7 +373,7 @@ const swappedItems = userItems.filter((item) => item.status === "swapped")
                         </div>
                       </CardContent>
                     </Card>
-                  )
+                  );
                 })}
               </div>
             ) : (
@@ -412,38 +381,6 @@ const swappedItems = userItems.filter((item) => item.status === "swapped")
                 <Package className="h-12 w-12 text-gray-400 mx-auto mb-4" />
                 <h3 className="text-lg font-semibold mb-2">No pending swap requests</h3>
                 <p className="text-gray-600">Incoming swap requests will appear here.</p>
-              </Card>
-            )}
-          </TabsContent>
-          <TabsContent value="redeems" className="space-y-4">
-            {redeemedItems.length > 0 ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {redeemedItems.map((item) => (
-                  <Card key={item.id} className="overflow-hidden">
-                    <div className="aspect-square relative">
-                      <Image
-                        src={item.imageUrl || "/placeholder.svg?height=300&width=300"}
-                        alt={item.title}
-                        fill
-                        className="object-cover"
-                      />
-                    </div>
-                    <CardContent className="p-4">
-                      <h3 className="font-semibold text-lg mb-2 line-clamp-1">{item.title}</h3>
-                      <div className="flex justify-between items-center mb-2">
-                        <Badge variant="secondary">{item.category}</Badge>
-                        <Badge variant="outline">{item.condition}</Badge>
-                      </div>
-                      <Badge variant="secondary" className="capitalize">{item.status}</Badge>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-            ) : (
-              <Card className="p-8 text-center">
-                <Package className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                <h3 className="text-lg font-semibold mb-2">No redeemed items yet</h3>
-                <p className="text-gray-600">Your redeemed items will appear here.</p>
               </Card>
             )}
           </TabsContent>
