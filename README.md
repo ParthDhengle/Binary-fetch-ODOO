@@ -16,13 +16,10 @@ Team Members:
 3)Atharva Deo :- deoatharva44@gmail.c
 
 
-
-
-<hr>
 <h2>📖 Overview</h2>
 ReWear is a web-based platform designed to facilitate the exchange of unused clothing through direct swaps or a point-based redemption system. Our mission is to promote sustainable fashion and reduce textile waste by encouraging users to reuse wearable garments instead of discarding them. 🌍
 
-✨ Features
+<h2>✨ Features</h2>
 
 Direct Swaps: Trade clothing items directly with other users.  
 Point-Based System: Earn points by uploading items and redeem them for other garments.  
@@ -31,7 +28,7 @@ Sustainable Fashion: Contribute to reducing textile waste and promoting eco-frie
 Responsive Design: Optimized for both desktop and mobile devices.
 
 
-🛠️ Tech Stack
+<h2>🛠️ Tech Stack</h2>
 
 Framework: Next.js  
 Styling: Tailwind CSS  
@@ -42,7 +39,7 @@ TypeScript: For type-safe development
 Deployment: Vercel (recommended)
 
 
-📂 Directory Structure
+<h2>📂 Directory Structure</h2>
 parthdhengle-binary-fetch-odoo.git/
 
 ├── **README.md** 📄
@@ -153,7 +150,7 @@ parthdhengle-binary-fetch-odoo.git/
 
 
 
-🚀 Getting Started
+<h2>🚀 Getting Started</h2>
 Prerequisites
 
 Node.js (v18 or higher)
@@ -162,25 +159,25 @@ Firebase account for authentication and database
 Cloudinary account for image hosting
 
 
-Installation
+<h2>Installation</h2>
 
 Clone the repository:
 git clone https://github.com/parthdhengle-binary-fetch-odoo.git
 cd parthdhengle-binary-fetch-odoo
 
 
-Install dependencies:
+<h2>Install dependencies:</h2>
 pnpm install
 
 
-Run the development server:
+<h2>Run the development server:</h2>
 pnpm dev
 
 Open http://localhost:3000 in your browser to view the app.
 
 
 
-Deployment
+<h2>Deployment</h2>
 To deploy the app, we recommend using Vercel:
 
 Push your code to a GitHub repository.
@@ -188,7 +185,7 @@ Connect your repository to Vercel and configure the necessary environment variab
 Deploy the app with a single click.
 
 
-🤝 Contributing
+<h2>🤝 Contributing</h2>
 We welcome contributions to ReWear! To contribute:
 
 Fork the repository.
@@ -198,23 +195,23 @@ Push to the branch (git push origin feature/your-feature).
 Create a pull request.
 
 
-👥 Team Members
+<h2>👥 Team Members</h2>
 
 Parth Dhengle - parthdhengle12@gmail.com  
 Tanish Jagtap - tanishjagtap91@gmail.com  
 Atharva Deo - deoatharva44@gmail.com
 
 
-📜 License
+<h2>📜 License</h2>
 This project is licensed under the MIT License. See the LICENSE file for details.
 
-🌟 Acknowledgments
+<h2>🌟 Acknowledgments</h2>
 
 Thanks to the open-source community for providing amazing tools like Next.js, Tailwind CSS, and Shadcn UI.
 Inspired by the mission to make fashion sustainable and accessible.
 
 
-🌿 ReWear – Swap, Reuse, Sustain!
+<h3>🌿 ReWear – Swap, Reuse, Sustain!</h3>
 
 TypeScript: For type-safe development
 
