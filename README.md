@@ -29,7 +29,7 @@ ReWear is a web-based platform designed to facilitate the exchange of unused clo
 
 
 <h2>🛠️ Tech Stack</h2>
-![image](https://github.com/user-attachments/assets/9aeefee1-5140-4b22-b1db-8cf7c6bd3925)
+<img width="100" height="817" alt="image" src="https://github.com/user-attachments/assets/9aeefee1-5140-4b22-b1db-8cf7c6bd3925" />
 
 
 Framework: Next.js  
