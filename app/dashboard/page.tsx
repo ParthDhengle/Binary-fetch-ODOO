@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { useAuth } from "@/components/auth-provider"
-import { collection, query, where, getDocs } from "firebase/firestore"
+import { collection, query, where, getDocs, doc, getDoc, updateDoc } from "firebase/firestore"
 import { db } from "@/lib/firebase"
 import { Navbar } from "@/components/navbar"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -25,9 +25,11 @@ interface Item {
   createdAt: any
 }
 
+
 export default function DashboardPage() {
   const { user, userData, loading } = useAuth()
   const [userItems, setUserItems] = useState<Item[]>([])
+  const [swapRequests, setSwapRequests] = useState<any[]>([])
   const [itemsLoading, setItemsLoading] = useState(true)
   const router = useRouter()
 
@@ -36,6 +38,48 @@ export default function DashboardPage() {
       router.push("/login")
     }
   }, [user, loading, router])
+
+  useEffect(() => {
+    const fetchSwapRequests = async () => {
+      if (!user) return;
+
+      try {
+        const q = query(
+          collection(db, "swaps"),
+          where("toUser", "==", user.uid),
+          where("status", "==", "pending")
+        );
+        const querySnapshot = await getDocs(q);
+        const requests = querySnapshot.docs.map((doc) => {
+          const data = doc.data();
+          return {
+            id: doc.id,
+            requesterId: data.requesterId, // Ensure requesterId is present
+            ...(data as { [key: string]: any }),
+          };
+        });
+
+        // Enrich swap requests with requester's name
+        const enrichedRequests = await Promise.all(
+          requests.map(async (request) => {
+            const requesterDoc = await getDoc(doc(db, "users", request.requesterId));
+            const requesterData = requesterDoc.data();
+            return {
+              ...request,
+              requesterName: requesterData?.name || "Unknown",
+            };
+          })
+        );
+        setSwapRequests(enrichedRequests);
+      } catch (error) {
+        console.error("Error fetching swap requests:", error);
+      }
+    };
+
+    if (user) {
+      fetchSwapRequests();
+    }
+  }, [user]);
 
   useEffect(() => {
     const fetchUserItems = async () => {
@@ -60,6 +104,48 @@ export default function DashboardPage() {
       fetchUserItems()
     }
   }, [user])
+
+  // Handle Accept button
+  const handleAccept = async (request: any) => {
+    try {
+      // Update swap status to "accepted"
+      await updateDoc(doc(db, "swaps", request.id), {
+        status: "accepted",
+      });
+
+      // Update item status to "swapped" in Firestore and local state
+      if (request.itemId) {
+        await updateDoc(doc(db, "items", request.itemId), {  // Fixed from " wrinkleitems" to "items"
+          status: "swapped",
+        });
+        setUserItems((prev) =>
+          prev.map((item) =>
+            item.id === request.itemId ? { ...item, status: "swapped" } : item
+          )
+        );
+      }
+
+      // Remove the request from the list
+      setSwapRequests((prev) => prev.filter((r) => r.id !== request.id));
+    } catch (error) {
+      console.error("Error accepting swap:", error);
+    }
+  };
+
+  // Handle Decline button
+  const handleDecline = async (request: any) => {
+    try {
+      // Update swap status to "declined"
+      await updateDoc(doc(db, "swaps", request.id), {
+        status: "declined",
+      });
+
+      // Remove the request from the list (no item status change needed)
+      setSwapRequests((prev) => prev.filter((r) => r.id !== request.id));
+    } catch (error) {
+      console.error("Error declining swap:", error);
+    }
+  };
 
   if (loading) {
     return (
@@ -144,6 +230,14 @@ export default function DashboardPage() {
             <TabsList>
               <TabsTrigger value="listings">My Listings</TabsTrigger>
               <TabsTrigger value="swaps">My Swaps</TabsTrigger>
+              <TabsTrigger value="requests">
+                Swap Requests
+                {swapRequests.length > 0 && (
+                  <Badge variant="destructive" className="ml-2">
+                    {swapRequests.length}
+                  </Badge>
+                )}
+              </TabsTrigger>
             </TabsList>
             <Button asChild>
               <Link href="/upload">
@@ -239,6 +333,54 @@ export default function DashboardPage() {
                 <TrendingUp className="h-12 w-12 text-gray-400 mx-auto mb-4" />
                 <h3 className="text-lg font-semibold mb-2">No swaps completed yet</h3>
                 <p className="text-gray-600">Your completed swaps will appear here.</p>
+              </Card>
+            )}
+          </TabsContent>
+
+          <TabsContent value="requests" className="space-y-4">
+            {swapRequests.length > 0 ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {swapRequests.map((request) => {
+                  const item = userItems.find((item) => item.id === request.itemId);
+                  return (
+                    <Card key={request.id} className="overflow-hidden">
+                      <CardContent className="p-4">
+                        <div className="space-y-2">
+                          <p className="font-semibold">Swap Request from {request.requesterName}</p>
+                          {item ? (
+                            <>
+                              <div className="aspect-square relative">
+                                <Image
+                                  src={item.imageUrl || "/placeholder.svg?height=300&width=300"}
+                                  alt={item.title}
+                                  fill
+                                  className="object-cover"
+                                />
+                              </div>
+                              <p>Item: {item.title}</p>
+                            </>
+                          ) : (
+                            <p>Item not found</p>
+                          )}
+                          <div className="flex space-x-2">
+                            <Button size="sm" onClick={() => handleAccept(request)}>
+                              Accept
+                            </Button>
+                            <Button size="sm" variant="outline" onClick={() => handleDecline(request)}>
+                              Decline
+                            </Button>
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  );
+                })}
+              </div>
+            ) : (
+              <Card className="p-8 text-center">
+                <Package className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                <h3 className="text-lg font-semibold mb-2">No pending swap requests</h3>
+                <p className="text-gray-600">Incoming swap requests will appear here.</p>
               </Card>
             )}
           </TabsContent>
