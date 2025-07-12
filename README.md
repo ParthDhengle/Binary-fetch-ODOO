@@ -45,58 +45,111 @@ Deployment: Vercel (recommended)
 📂 Directory Structure
 parthdhengle-binary-fetch-odoo.git/
 ├── **README.md** 📄
+
 ├── **components.json**
+
 ├── **next.config.mjs**
+
 ├── **package.json**
+
 ├── **pnpm-lock.yaml**
+
 ├── **postcss.config.mjs**
+
 ├── **tailwind.config.ts**
+
 ├── **tsconfig.json**
+
 ├── **app/** 🌐
+
 │   ├── **globals.css**
+
 │   ├── **layout.tsx**
+
 │   ├── **page.tsx**
+
 │   ├── **admin/**
+
 │   │   └── **page.tsx**
+
 │   ├── **api/**
+
 │   │   └── **cloudinary-signature/**
+
 │   │       └── **route.ts**
+
 │   ├── **browse/**
+
 │   │   ├── **loading.tsx**
+
 │   │   └── **page.tsx**
+
 │   ├── **dashboard/**
+
 │   │   └── **page.tsx**
+
 │   ├── **item/**
+
 │   │   └── **[id]/**
+
 │   │       └── **page.tsx**
+
 │   ├── **login/**
+
 │   │   └── **page.tsx**
+
 │   ├── **register/**
+
 │   │   └── **page.tsx**
+
 │   └── **upload/**
+
 │       └── **page.tsx**
+
 ├── **components/** 🧩
+
 │   ├── **auth-provider.tsx**
+
 │   ├── **category-grid.tsx**
+
 │   ├── **item-carousel.tsx**
+
 │   ├── **navbar.tsx**
+
 │   ├── **theme-provider.tsx**
+
 │   └── **ui/**
+
 │       ├── **accordion.tsx**
+
 │       ├── **alert-dialog.tsx**
+
 │       ├── **alert.tsx**
+
 │       └── (other UI components)
+
 ├── **hooks/** 🎣
+
 │   ├── **use-mobile.tsx**
+
 │   └── **use-toast.ts**
+
 ├── **lib/** 📚
+
 │   ├── **cloudinary.ts**
+
 │   ├── **firebase.ts**
+
 │   └── **utils.ts**
+
 ├── **scripts/** 📜
+
 │   └── **create-firestore-rules.sql**
+
 └── **styles/** 🎨
+
     └── **globals.css**
+
 
 
 🚀 Getting Started
