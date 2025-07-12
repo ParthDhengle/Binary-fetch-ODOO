@@ -93,7 +93,7 @@ Deployment: Vercel (recommended)
 ├── **scripts/** <br>
 │   └── **create-firestore-rules.sql**<br>
 └── **styles/**<br>
-└── **globals.css**<br>
+  └── **globals.css**<br>
 
 
 <h2>🚀 Getting Started</h2>
