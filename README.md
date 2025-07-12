@@ -38,7 +38,7 @@ Components: Shadcn UI
 Backend: Firebase for authentication and database  
 Image Hosting: Cloudinary for media management  
 TypeScript: For type-safe development  
-Deployment: Vercel (recommended)
+
 
 
 <h2>📂 Directory Structure</h2>
