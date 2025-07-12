@@ -40,7 +40,6 @@ Deployment: Vercel (recommended)
 
 
 <h2>📂 Directory Structure</h2>
-parthdhengle-binary-fetch-odoo.git/
 
 ├── **README.md** 📄
 
@@ -144,9 +143,9 @@ parthdhengle-binary-fetch-odoo.git/
 
 │   └── **create-firestore-rules.sql**
 
-└── **styles/** 🎨
+└── **styles/**
 
-    └── **globals.css**
+└── **globals.css**
 
 
 
