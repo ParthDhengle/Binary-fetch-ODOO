@@ -1,10 +1,9 @@
 "use client"
 
 import type React from "react"
-
 import { useState } from "react"
-import { createUserWithEmailAndPassword } from "firebase/auth"
-import { doc, setDoc } from "firebase/firestore"
+import { createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider } from "firebase/auth"
+import { doc, setDoc, getDoc } from "firebase/firestore"
 import { auth, db } from "@/lib/firebase"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -12,7 +11,7 @@ import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
-import { Recycle } from "lucide-react"
+import { Recycle, LogIn } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
 
 export default function RegisterPage() {
@@ -25,6 +24,7 @@ export default function RegisterPage() {
   const [loading, setLoading] = useState(false)
   const router = useRouter()
   const { toast } = useToast()
+  const googleProvider = new GoogleAuthProvider()
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData((prev) => ({
@@ -50,7 +50,6 @@ export default function RegisterPage() {
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, formData.email, formData.password)
 
-      // Create user document in Firestore
       await setDoc(doc(db, "users", userCredential.user.uid), {
         name: formData.name,
         email: formData.email,
@@ -67,6 +66,41 @@ export default function RegisterPage() {
     } catch (error: any) {
       toast({
         title: "Registration failed",
+        description: error.message,
+        variant: "destructive",
+      })
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleGoogleRegister = async () => {
+    setLoading(true)
+    try {
+      const userCredential = await signInWithPopup(auth, googleProvider)
+      const user = userCredential.user
+
+      // Check if user document already exists to avoid overwriting
+      const userDocRef = doc(db, "users", user.uid)
+      const userDoc = await getDoc(userDocRef)
+      if (!userDoc.exists()) {
+        await setDoc(userDocRef, {
+          name: user.displayName || "Anonymous",
+          email: user.email || "",
+          points: 0,
+          role: "user",
+          createdAt: new Date(),
+        })
+      }
+
+      toast({
+        title: "Account created!",
+        description: "Welcome to ReWear community.",
+      })
+      router.push("/dashboard")
+    } catch (error: any) {
+      toast({
+        title: "Google registration failed",
         description: error.message,
         variant: "destructive",
       })
@@ -139,6 +173,15 @@ export default function RegisterPage() {
               {loading ? "Creating account..." : "Register"}
             </Button>
           </form>
+          <Button
+            variant="outline"
+            className="w-full mt-4"
+            onClick={handleGoogleRegister}
+            disabled={loading}
+          >
+            <LogIn className="h-4 w-4 mr-2" />
+            Continue with Google
+          </Button>
           <div className="mt-6 text-center text-sm">
             Already have an account?{" "}
             <Link href="/login" className="text-primary hover:underline">

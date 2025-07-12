@@ -1,9 +1,8 @@
 "use client"
 
 import type React from "react"
-
 import { useState } from "react"
-import { signInWithEmailAndPassword } from "firebase/auth"
+import { signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider } from "firebase/auth"
 import { auth } from "@/lib/firebase"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -11,7 +10,7 @@ import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
-import { Recycle } from "lucide-react"
+import { Recycle, LogIn } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
 
 export default function LoginPage() {
@@ -20,6 +19,7 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false)
   const router = useRouter()
   const { toast } = useToast()
+  const googleProvider = new GoogleAuthProvider()
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -35,6 +35,26 @@ export default function LoginPage() {
     } catch (error: any) {
       toast({
         title: "Login failed",
+        description: error.message,
+        variant: "destructive",
+      })
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleGoogleLogin = async () => {
+    setLoading(true)
+    try {
+      await signInWithPopup(auth, googleProvider)
+      toast({
+        title: "Welcome back!",
+        description: "You have successfully logged in with Google.",
+      })
+      router.push("/dashboard")
+    } catch (error: any) {
+      toast({
+        title: "Google login failed",
         description: error.message,
         variant: "destructive",
       })
@@ -81,6 +101,15 @@ export default function LoginPage() {
               {loading ? "Signing in..." : "Login"}
             </Button>
           </form>
+          <Button
+            variant="outline"
+            className="w-full mt-4"
+            onClick={handleGoogleLogin}
+            disabled={loading}
+          >
+            <LogIn className="h-4 w-4 mr-2" />
+            Continue with Google
+          </Button>
           <div className="mt-6 text-center text-sm">
             Don't have an account?{" "}
             <Link href="/register" className="text-primary hover:underline">
