@@ -7,7 +7,7 @@ through direct swaps or a point-based redemption system. The goal is to promote 
 fashion and reduce textile waste by encouraging users to reuse wearable garments instead of
 discarding them.
 
-Team Members:
+<b>Team Members:</b>
 
 1)Parth Dhengle:- parthdhengle12@gmail.com
 
