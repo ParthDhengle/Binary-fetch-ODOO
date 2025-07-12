@@ -74,34 +74,34 @@ export default function ItemDetailPage() {
   }, [params.id, router])
 
   const handleRequestSwap = async () => {
-    if (!user || !item) return
+  if (!user || !item) return
 
-    setRequesting(true)
-    try {
-      // Create swap request
-      await addDoc(collection(db, "swaps"), {
-        itemId: item.id,
-        fromUser: user.uid,
-        toUser: item.uploaderId,
-        status: "pending",
-        createdAt: new Date(),
-      })
+  setRequesting(true)
+  try {
+    // Create swap request with the correct field name
+    await addDoc(collection(db, "swaps"), {
+      itemId: item.id,
+      requesterId: user.uid,  // Changed from fromUser to requesterId
+      toUser: item.uploaderId,
+      status: "pending",
+      createdAt: new Date(),
+    })
 
-      toast({
-        title: "Swap request sent!",
-        description: "The owner will be notified of your request.",
-      })
-    } catch (error) {
-      console.error("Error requesting swap:", error)
-      toast({
-        title: "Request failed",
-        description: "There was an error sending your swap request.",
-        variant: "destructive",
-      })
-    } finally {
-      setRequesting(false)
-    }
+    toast({
+      title: "Swap request sent!",
+      description: "The owner will be notified of your request.",
+    })
+  } catch (error) {
+    console.error("Error requesting swap:", error)
+    toast({
+      title: "Request failed",
+      description: "There was an error sending your swap request.",
+      variant: "destructive",
+    })
+  } finally {
+    setRequesting(false)
   }
+}
 
   const handleRedeemWithPoints = async () => {
     if (!user || !item || !userData) return
