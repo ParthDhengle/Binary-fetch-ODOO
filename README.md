@@ -8,9 +8,12 @@ fashion and reduce textile waste by encouraging users to reuse wearable garments
 discarding them.
 
 Team Members:
+
 1)Parth Dhengle:- parthdhengle12@gmail.com
+
 2)Tanish Jagtap:- tanishjagtap91@gmail.com
-3)Atharva Deo :- deoatharva44@gmail.com
+
+#3)Atharva Deo :- deoatharva44@gmail.com
 
 Promoting sustainable fashion, one swap at a time.
 
