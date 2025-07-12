@@ -29,6 +29,7 @@ ReWear is a web-based platform designed to facilitate the exchange of unused clo
 
 
 <h2>🛠️ Tech Stack</h2>
+<img>https://www.stickpng.com/img/icons-logos-emojis/tech-companies/react-full-logo</img>
 
 Framework: Next.js  
 Styling: Tailwind CSS  
