@@ -1,4 +1,4 @@
-# ReWear – Community Clothing Exchange 🌿👗 #
+![WhatsApp Image 2025-07-12 at 17 16 19_3e14f54c](https://github.com/user-attachments/assets/59d2f4ca-c28e-4116-96b6-bf64d6272fe5)![WhatsApp Image 2025-07-12 at 17 16 19_3e14f54c](https://github.com/user-attachments/assets/13fa4077-736f-4e09-b9d0-edd2ce1337d7)# ReWear – Community Clothing Exchange 🌿👗 #
 
 <b>ReWear – Community Clothing Exchange</b><br>
 Overview:
@@ -136,4 +136,8 @@ Atharva Deo - deoatharva44@gmail.com
 <h2>📜 License</h2>
 This project is licensed under the MIT License. See the LICENSE file for details.
 
+<img width="1920" height="1200" alt="Screenshot 2025-07-12 171543" src="https://github.com/user-attachments/assets/3f37fd2a-d306-4f49-87cc-5d215a08d6d2" />
+<img width="1920" height="1200" alt="Screenshot 2025-07-12 171522" src="https://github.com/user-attachments/assets/4d2beacb-7d53-4efa-9521-5f20d06f0e8a" />
+<img width="1920" height="1200" alt="Screenshot 2025-07-12 171503" src="https://github.com/user-attachments/assets/9418cecd-f779-4292-8df8-73c674760297" />
+<img width="1920" height="1200" alt="Screenshot 2025-07-12 171452" src="https://github.com/user-attachments/assets/42207b20-afb8-4519-9bf6-4f639244e098" />
 
