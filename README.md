@@ -46,3 +46,36 @@ Sustainable Fashion: Contribute to reducing textile waste and promoting eco-frie
 
 
 Responsive Design: Optimized for both desktop and mobile devices.
+
+
+🛠️ Tech Stack
+
+
+
+
+
+Framework: Next.js
+
+
+
+Styling: Tailwind CSS
+
+
+
+Components: Shadcn UI
+
+
+
+Backend: Firebase for authentication and database
+
+
+
+Image Hosting: Cloudinary for media management
+
+
+
+TypeScript: For type-safe development
+
+
+
+Deployment: Vercel (recommended)
