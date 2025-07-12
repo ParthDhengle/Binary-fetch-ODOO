@@ -42,7 +42,6 @@ Deployment: Vercel (recommended)
 <h2>📂 Directory Structure</h2>
 
 ├── **README.md** 📄
-
 ├── **components.json**
 
 ├── **next.config.mjs**
