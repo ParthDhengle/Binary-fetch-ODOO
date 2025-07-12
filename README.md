@@ -13,7 +13,7 @@ Team Members:
 
 2)Tanish Jagtap:- tanishjagtap91@gmail.com
 
-3)Atharva Deo :- deoatharva44@gmail.c
+3)Atharva Deo :- deoatharva44@gmail.com
 
 
 <h2>📖 Overview</h2>
