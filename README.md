@@ -8,7 +8,6 @@ fashion and reduce textile waste by encouraging users to reuse wearable garments
 discarding them.
 
 Team Members:
-
 1)Parth Dhengle:- parthdhengle12@gmail.com
 
 2)Tanish Jagtap:- tanishjagtap91@gmail.com
@@ -24,11 +23,6 @@ ReWear is a web-based platform designed to facilitate the exchange of unused clo
 
 
 ✨ Features
-
-
-
-
-
 Direct Swaps: Trade clothing items directly with other users.
 
 
@@ -49,11 +43,6 @@ Responsive Design: Optimized for both desktop and mobile devices.
 
 
 🛠️ Tech Stack
-
-
-
-
-
 Framework: Next.js
 
 
