@@ -42,110 +42,58 @@ Deployment: Vercel (recommended)
 <h2>📂 Directory Structure</h2>
 
 ├── **README.md** 📄<br>
-├── **components.json**
-
-├── **next.config.mjs**
-
-├── **package.json**
-
-├── **pnpm-lock.yaml**
-
-├── **postcss.config.mjs**
-
-├── **tailwind.config.ts**
-
-├── **tsconfig.json**
-
-├── **app/** 🌐
-
-│   ├── **globals.css**
-
-│   ├── **layout.tsx**
-
-│   ├── **page.tsx**
-
-│   ├── **admin/**
-
-│   │   └── **page.tsx**
-
-│   ├── **api/**
-
-│   │   └── **cloudinary-signature/**
-
-│   │       └── **route.ts**
-
-│   ├── **browse/**
-
-│   │   ├── **loading.tsx**
-
-│   │   └── **page.tsx**
-
-│   ├── **dashboard/**
-
-│   │   └── **page.tsx**
-
-│   ├── **item/**
-
-│   │   └── **[id]/**
-
-│   │       └── **page.tsx**
-
-│   ├── **login/**
-
-│   │   └── **page.tsx**
-
-│   ├── **register/**
-
-│   │   └── **page.tsx**
-
-│   └── **upload/**
-
-│       └── **page.tsx**
-
-├── **components/** 🧩
-
-│   ├── **auth-provider.tsx**
-
-│   ├── **category-grid.tsx**
-
-│   ├── **item-carousel.tsx**
-
-│   ├── **navbar.tsx**
-
-│   ├── **theme-provider.tsx**
-
-│   └── **ui/**
-
-│       ├── **accordion.tsx**
-
-│       ├── **alert-dialog.tsx**
-
-│       ├── **alert.tsx**
-
-│       └── (other UI components)
-
-├── **hooks/** 🎣
-
-│   ├── **use-mobile.tsx**
-
-│   └── **use-toast.ts**
-
-├── **lib/** 📚
-
-│   ├── **cloudinary.ts**
-
-│   ├── **firebase.ts**
-
-│   └── **utils.ts**
-
-├── **scripts/** 📜
-
-│   └── **create-firestore-rules.sql**
-
-└── **styles/**
-
-└── **globals.css**
-
+├── **components.json**<br>
+├── **next.config.mjs**<br>
+├── **package.json**<br>
+├── **pnpm-lock.yaml**<br>
+├── **postcss.config.mjs**<br>
+├── **tailwind.config.ts**<br>
+├── **tsconfig.json**<br>
+├── **app/** 🌐<br>
+│   ├── **globals.css**<br>
+│   ├── **layout.tsx**<br>
+│   ├── **page.tsx**<br>
+│   ├── **admin/**<br>
+│   │   └── **page.tsx**<br>
+│   ├── **api/**<br>
+│   │   └── **cloudinary-signature/**<br>
+│   │       └── **route.ts**<br>
+│   ├── **browse/**<br>
+│   │   ├── **loading.tsx**<br>
+│   │   └── **page.tsx*<br>
+│   ├── **dashboard/**<br>
+│   │   └── **page.tsx**<br>
+│   ├── **item/**<br>
+│   │   └── **[id]/**<br>
+│   │       └── **page.tsx**<br>
+│   ├── **login/**<br>
+│   │   └── **page.tsx**<br>
+│   ├── **register/**<br>
+│   │   └── **page.tsx**<br>
+│   └── **upload/**<br>
+│       └── **page.tsx**<br>
+├── **components/** �<br>�
+│   ├── **auth-provider.tsx**<br>
+│   ├── **category-grid.tsx**<br>
+│   ├── **item-carousel.tsx**<br>
+│   ├── **navbar.tsx**<br>
+│   ├── **theme-provider.tsx**<br>
+│   └── **ui/**<br>
+│       ├── **accordion.tsx**<br>
+│       ├── **alert-dialog.tsx**<br>
+│       ├── **alert.tsx**<br>
+│       └── (other UI components)<br>
+├── **hooks/** �<br>�
+│   ├── **use-mobile.tsx**<br>
+│   └── **use-toast.ts**<br>
+├── **lib/** �<br>�
+│   ├── **cloudinary.ts**<br>
+│   ├── **firebase.ts**<br>
+│   └── **utils.ts**<br>
+├── **scripts/** �<br>�
+│   └── **create-firestore-rules.sql**<br>
+└── **styles/**<br>
+└── **globals.css**<br>
 
 
 <h2>🚀 Getting Started</h2>
