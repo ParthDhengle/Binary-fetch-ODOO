@@ -41,7 +41,7 @@ Deployment: Vercel (recommended)
 
 <h2>📂 Directory Structure</h2>
 
-├── **README.md** 📄<br>
+├── **README.md** <br>
 ├── **components.json**<br>
 ├── **next.config.mjs**<br>
 ├── **package.json**<br>
@@ -49,7 +49,7 @@ Deployment: Vercel (recommended)
 ├── **postcss.config.mjs**<br>
 ├── **tailwind.config.ts**<br>
 ├── **tsconfig.json**<br>
-├── **app/** 🌐<br>
+├── **app/** <br>
 │   ├── **globals.css**<br>
 │   ├── **layout.tsx**<br>
 │   ├── **page.tsx**<br>
@@ -72,7 +72,7 @@ Deployment: Vercel (recommended)
 │   │   └── **page.tsx**<br>
 │   └── **upload/**<br>
 │       └── **page.tsx**<br>
-├── **components/** �<br>�
+├── **components/** <br>
 │   ├── **auth-provider.tsx**<br>
 │   ├── **category-grid.tsx**<br>
 │   ├── **item-carousel.tsx**<br>
@@ -83,14 +83,14 @@ Deployment: Vercel (recommended)
 │       ├── **alert-dialog.tsx**<br>
 │       ├── **alert.tsx**<br>
 │       └── (other UI components)<br>
-├── **hooks/** �<br>�
+├── **hooks/** <br>
 │   ├── **use-mobile.tsx**<br>
 │   └── **use-toast.ts**<br>
-├── **lib/** �<br>�
+├── **lib/** <br>
 │   ├── **cloudinary.ts**<br>
 │   ├── **firebase.ts**<br>
 │   └── **utils.ts**<br>
-├── **scripts/** �<br>�
+├── **scripts/** <br>
 │   └── **create-firestore-rules.sql**<br>
 └── **styles/**<br>
 └── **globals.css**<br>
