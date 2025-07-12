@@ -1,8 +1,9 @@
+// app/item/[id]/page.tsx
 "use client"
 
 import { useEffect, useState } from "react"
 import { useParams, useRouter } from "next/navigation"
-import { doc, getDoc, collection, addDoc, updateDoc } from "firebase/firestore"
+import { doc, getDoc, collection, addDoc, updateDoc, query, where, getDocs } from "firebase/firestore"
 import { db } from "@/lib/firebase"
 import { useAuth } from "@/components/auth-provider"
 import { Navbar } from "@/components/navbar"
@@ -14,6 +15,7 @@ import { useToast } from "@/hooks/use-toast"
 import Image from "next/image"
 import { ArrowLeft, MessageCircle, Star } from "lucide-react"
 import Link from "next/link"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog"
 
 interface Item {
   id: string
@@ -41,14 +43,18 @@ export default function ItemDetailPage() {
   const { toast } = useToast()
   const [item, setItem] = useState<Item | null>(null)
   const [uploaderData, setUploaderData] = useState<UploaderData | null>(null)
+  const [userItems, setUserItems] = useState<Item[]>([])
   const [loading, setLoading] = useState(true)
   const [requesting, setRequesting] = useState(false)
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [selectedItemId, setSelectedItemId] = useState<string | null>(null)
 
   useEffect(() => {
-    const fetchItem = async () => {
+    const fetchItemAndUserItems = async () => {
       if (!params.id) return
 
       try {
+        // Fetch item details
         const itemDoc = await getDoc(doc(db, "items", params.id as string))
         if (itemDoc.exists()) {
           const itemData = { id: itemDoc.id, ...itemDoc.data() } as Item
@@ -59,92 +65,101 @@ export default function ItemDetailPage() {
           if (uploaderDoc.exists()) {
             setUploaderData(uploaderDoc.data() as UploaderData)
           }
+
+          // Fetch user's available items if they can interact
+          if (user && user.uid !== itemData.uploaderId) {
+            const q = query(
+              collection(db, "items"),
+              where("uploaderId", "==", user.uid),
+              where("status", "==", "available")
+            )
+            const querySnapshot = await getDocs(q)
+            const items = querySnapshot.docs.map((doc) => ({
+              id: doc.id,
+              ...doc.data(),
+            })) as Item[]
+            setUserItems(items)
+          }
         } else {
           router.push("/browse")
         }
       } catch (error) {
-        console.error("Error fetching item:", error)
+        console.error("Error fetching data:", error)
         router.push("/browse")
       } finally {
         setLoading(false)
       }
     }
 
-    fetchItem()
-  }, [params.id, router])
+    fetchItemAndUserItems()
+  }, [params.id, router, user])
 
-  const handleRequestSwap = async () => {
-  if (!user || !item) return
-
-  setRequesting(true)
-  try {
-    // Create swap request with the correct field name
-    await addDoc(collection(db, "swaps"), {
-      itemId: item.id,
-      requesterId: user.uid,  // Changed from fromUser to requesterId
-      toUser: item.uploaderId,
-      status: "pending",
-      createdAt: new Date(),
-    })
-
-    toast({
-      title: "Swap request sent!",
-      description: "The owner will be notified of your request.",
-    })
-  } catch (error) {
-    console.error("Error requesting swap:", error)
-    toast({
-      title: "Request failed",
-      description: "There was an error sending your swap request.",
-      variant: "destructive",
-    })
-  } finally {
-    setRequesting(false)
-  }
-}
-
-  const handleRedeemWithPoints = async () => {
-    if (!user || !item || !userData) return
-
-    const pointsRequired = 50 // Example points required
-    if (userData.points < pointsRequired) {
-      toast({
-        title: "Insufficient points",
-        description: `You need ${pointsRequired} points to redeem this item.`,
-        variant: "destructive",
-      })
-      return
-    }
+  const handleRequestSwap = async (offeredItemId: string) => {
+    if (!user || !item) return
 
     setRequesting(true)
     try {
-      // Update item status
-      await updateDoc(doc(db, "items", item.id), {
-        status: "redeemed",
-      })
-
-      // Deduct points from user
-      await updateDoc(doc(db, "users", user.uid), {
-        points: userData.points - pointsRequired,
+      await addDoc(collection(db, "swaps"), {
+        itemId: item.id,
+        requesterId: user.uid,
+        toUser: item.uploaderId,
+        offeredItemId, // Include the offered item
+        status: "pending",
+        createdAt: new Date(),
       })
 
       toast({
-        title: "Item redeemed!",
-        description: "The item has been redeemed with your points.",
+        title: "Swap request sent!",
+        description: "The owner will be notified of your request.",
       })
-
-      router.push("/dashboard")
+      setIsModalOpen(false)
     } catch (error) {
-      console.error("Error redeeming item:", error)
+      console.error("Error requesting swap:", error)
       toast({
-        title: "Redemption failed",
-        description: "There was an error redeeming the item.",
+        title: "Request failed",
+        description: "There was an error sending your swap request.",
         variant: "destructive",
       })
     } finally {
       setRequesting(false)
     }
   }
+
+  const handleRedeemWithPoints = async () => {
+  if (!user || !item) return;
+
+  setRequesting(true);
+  try {
+    const idToken = await user.getIdToken();
+    const response = await fetch('/api/redeem', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ itemId: item.id, userId: user.uid, idToken }),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.error || 'Redemption failed');
+    }
+
+    toast({
+      title: "Item redeemed!",
+      description: "The item has been redeemed with your points.",
+    });
+    router.push("/dashboard");
+  } catch (error) {
+    console.error("Error redeeming item:", error);
+    toast({
+      title: "Redemption failed",
+      description: (error instanceof Error ? error.message : "There was an error redeeming the item."),
+      variant: "destructive",
+    });
+  } finally {
+    setRequesting(false);
+  }
+};
 
   if (loading) {
     return (
@@ -182,7 +197,6 @@ export default function ItemDetailPage() {
         </Button>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {/* Image Section */}
           <div className="space-y-4">
             <div className="aspect-square relative rounded-lg overflow-hidden">
               <Image
@@ -194,24 +208,15 @@ export default function ItemDetailPage() {
             </div>
           </div>
 
-          {/* Details Section */}
           <div className="space-y-6">
-            <div>
-              <h1 className="text-3xl font-bold mb-4">{item.title}</h1>
-              <div className="flex flex-wrap gap-2 mb-4">
-                <Badge variant="secondary" className="text-sm">
-                  {item.category}
-                </Badge>
-                <Badge variant="outline" className="text-sm">
-                  {item.condition}
-                </Badge>
-                <Badge variant="outline" className="text-sm">
-                  Size: {item.size}
-                </Badge>
-                <Badge variant={item.status === "available" ? "default" : "secondary"} className="text-sm capitalize">
-                  {item.status}
-                </Badge>
-              </div>
+            <h1 className="text-3xl font-bold mb-4">{item.title}</h1>
+            <div className="flex flex-wrap gap-2 mb-4">
+              <Badge variant="secondary" className="text-sm">{item.category}</Badge>
+              <Badge variant="outline" className="text-sm">{item.condition}</Badge>
+              <Badge variant="outline" className="text-sm">Size: {item.size}</Badge>
+              <Badge variant={item.status === "available" ? "default" : "secondary"} className="text-sm capitalize">
+                {item.status}
+              </Badge>
             </div>
 
             <div>
@@ -224,15 +229,12 @@ export default function ItemDetailPage() {
                 <h3 className="font-semibold mb-2">Tags</h3>
                 <div className="flex flex-wrap gap-2">
                   {item.tags.map((tag, index) => (
-                    <Badge key={index} variant="outline" className="text-sm">
-                      {tag}
-                    </Badge>
+                    <Badge key={index} variant="outline" className="text-sm">{tag}</Badge>
                   ))}
                 </div>
               </div>
             )}
 
-            {/* Uploader Info */}
             <Card>
               <CardContent className="p-4">
                 <div className="flex items-center space-x-3">
@@ -250,11 +252,10 @@ export default function ItemDetailPage() {
               </CardContent>
             </Card>
 
-            {/* Action Buttons */}
             {canInteract && (
               <div className="space-y-3">
-                <Button onClick={handleRequestSwap} disabled={requesting} className="w-full" size="lg">
-                  {requesting ? "Sending Request..." : "Request Swap"}
+                <Button onClick={() => setIsModalOpen(true)} disabled={requesting} className="w-full" size="lg">
+                  Request Swap
                   <MessageCircle className="h-4 w-4 ml-2" />
                 </Button>
                 <Button
@@ -278,14 +279,70 @@ export default function ItemDetailPage() {
             )}
 
             {!user && (
-              <div className="space-y-3">
-                <Button asChild className="w-full" size="lg">
-                  <Link href="/login">Login to Request Swap</Link>
-                </Button>
-              </div>
+              <Button asChild className="w-full" size="lg">
+                <Link href="/login">Login to Request Swap</Link>
+              </Button>
             )}
           </div>
         </div>
+
+        <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Select an Item to Offer</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4">
+              {userItems.length > 0 ? (
+                userItems.map((userItem) => (
+                  <div key={userItem.id} className="flex items-center space-x-4">
+                    <Image
+                      src={userItem.imageUrl || "/placeholder.svg?height=100&width=100"}
+                      alt={userItem.title}
+                      width={100}
+                      height={100}
+                      className="object-cover"
+                    />
+                    <div>
+                      <p className="font-semibold">{userItem.title}</p>
+                      <p className="text-sm text-gray-600">{userItem.category}</p>
+                    </div>
+                    <Button
+                      variant={selectedItemId === userItem.id ? "default" : "outline"}
+                      onClick={() => setSelectedItemId(userItem.id)}
+                    >
+                      {selectedItemId === userItem.id ? "Selected" : "Select"}
+                    </Button>
+                  </div>
+                ))
+              ) : (
+                <div>
+                  <p>You have no available items to offer.</p>
+                  <Button asChild variant="link">
+                    <Link href="/upload">Upload an Item</Link>
+                  </Button>
+                </div>
+              )}
+            </div>
+            <DialogFooter>
+              <Button
+                onClick={() => {
+                  if (selectedItemId) {
+                    handleRequestSwap(selectedItemId)
+                  } else {
+                    toast({
+                      title: "No item selected",
+                      description: "Please select an item to offer.",
+                      variant: "destructive",
+                    })
+                  }
+                }}
+                disabled={!selectedItemId || requesting}
+              >
+                {requesting ? "Sending..." : "Confirm Swap Request"}
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </div>
     </div>
   )
