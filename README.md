@@ -17,15 +17,15 @@ Team Members:
 
 
 <h2>📖 Overview</h2>
-ReWear is a web-based platform designed to facilitate the exchange of unused clothing through direct swaps or a point-based redemption system. Our mission is to promote sustainable fashion and reduce textile waste by encouraging users to reuse wearable garments instead of discarding them. 🌍
+ReWear is a web-based platform designed to facilitate the exchange of unused clothing through direct swaps or a point-based redemption system. Our mission is to promote sustainable fashion and reduce textile waste by encouraging users to reuse wearable garments instead of discarding them. 
 
 <h2>✨ Features</h2>
 
-Direct Swaps: Trade clothing items directly with other users.  
-Point-Based System: Earn points by uploading items and redeem them for other garments.  
-User-Friendly Interface: Browse, upload, and manage clothing items with ease.  
-Sustainable Fashion: Contribute to reducing textile waste and promoting eco-friendly practices.  
-Responsive Design: Optimized for both desktop and mobile devices.
+<b>Direct Swaps:</b> Trade clothing items directly with other users.  
+<b>Point-Based System:</b> Earn points by uploading items and redeem them for other garments.  
+<b>User-Friendly Interface:</b> Browse, upload, and manage clothing items with ease.  
+<b>Sustainable Fashion:</b> Contribute to reducing textile waste and promoting eco-friendly practices.  
+<b>Responsive Design:</b> Optimized for both desktop and mobile devices.
 
 
 <h2>🛠️ Tech Stack</h2>
@@ -169,24 +169,6 @@ cd parthdhengle-binary-fetch-odoo
 pnpm install
 
 
-<h2>Run the development server:</h2>
-pnpm dev
-
-Open http://localhost:3000 in your browser to view the app.
-
-
-
-<h2>Deployment</h2>
-To deploy the app, we recommend using Vercel:
-
-Push your code to a GitHub repository.
-Connect your repository to Vercel and configure the necessary environment variables.
-Deploy the app with a single click.
-
-
-<h2>🤝 Contributing</h2>
-We welcome contributions to ReWear! To contribute:
-
 Fork the repository.
 Create a new branch (git checkout -b feature/your-feature).
 Make your changes and commit (git commit -m 'Add your feature').
@@ -204,16 +186,4 @@ Atharva Deo - deoatharva44@gmail.com
 <h2>📜 License</h2>
 This project is licensed under the MIT License. See the LICENSE file for details.
 
-<h2>🌟 Acknowledgments</h2>
 
-Thanks to the open-source community for providing amazing tools like Next.js, Tailwind CSS, and Shadcn UI.
-Inspired by the mission to make fashion sustainable and accessible.
-
-
-<h3>🌿 ReWear – Swap, Reuse, Sustain!</h3>
-
-TypeScript: For type-safe development
-
-
-
-Deployment: Vercel (recommended)
