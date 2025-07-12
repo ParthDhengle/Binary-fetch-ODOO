@@ -74,6 +74,10 @@ export default function UploadPage() {
       // Upload image to Cloudinary
       const imageUrl = await uploadToCloudinary(image)
 
+      // Validate that imageUrl is defined and a string
+      if (!imageUrl || typeof imageUrl !== "string") {
+        throw new Error("Failed to upload image to Cloudinary");
+      }
       // Save item to Firestore
       await addDoc(collection(db, "items"), {
         ...formData,
