@@ -44,6 +44,7 @@ Deployment: Vercel (recommended)
 
 📂 Directory Structure
 parthdhengle-binary-fetch-odoo.git/
+
 ├── **README.md** 📄
 
 ├── **components.json**
